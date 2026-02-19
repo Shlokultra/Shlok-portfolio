@@ -8,7 +8,7 @@ Built with performance, visual identity, and structured design principles in min
 
 ## 🔥 Live Preview
 
-[Add your live GitHub Pages / hosting link here]
+https://github.com/Shlokultra/Shlok-portfolio
 
 ---
 
