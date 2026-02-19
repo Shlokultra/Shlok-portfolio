@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shlok Yadav — Cybersecurity & Dev</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050a0a;
+    --surface: #0d1a1a;
+    --green: #00ff88;
+    --green-dim: #00ff8833;
+    --green-mid: #00cc6a;
+    --text: #c8e6c9;
+    --muted: #4a7a5a;
+    --border: #1a3a2a;
+    --accent: #00ffcc;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--green);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s;
+    box-shadow: 0 0 20px var(--green);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--green);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+    opacity: 0.5;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.015) 2px, rgba(0,255,136,0.015) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Navigation */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(5,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--green);
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::before { content: '// '; color: var(--green); opacity: 0.5; }
+  .nav-links a:hover { color: var(--green); }
+
+  /* Sections */
+  section { position: relative; z-index: 1; }
+
+  /* Hero */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 2.5rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--green);
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s forwards;
+  }
+
+  h1 .highlight {
+    color: var(--green);
+    text-shadow: 0 0 40px rgba(0,255,136,0.4);
+  }
+
+  .hero-role {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--muted);
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.6s forwards;
+  }
+
+  .hero-desc {
+    max-width: 560px;
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 1.05rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.8s forwards;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s 1s forwards;
+  }
+
+  .btn {
+    padding: 0.85rem 2rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: #050a0a;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-primary:hover {
+    background: var(--accent);
+    box-shadow: 0 0 30px rgba(0,255,136,0.5);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--green);
+    border: 1px solid var(--green);
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-outline:hover {
+    background: var(--green-dim);
+    box-shadow: 0 0 20px rgba(0,255,136,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Terminal blink */
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid var(--green);
+    padding: 0.4rem 1rem;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0s forwards;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Content sections */
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 2.5rem;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--green);
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 3rem;
+    position: relative;
+    display: inline-block;
+  }
+  h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--green);
+    box-shadow: 0 0 15px var(--green);
+  }
+
+  /* Skills grid */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .skill-card:hover { border-color: var(--green); transform: translateY(-4px); box-shadow: 0 10px 40px rgba(0,255,136,0.1); }
+  .skill-card:hover::before { transform: translateX(100%); }
+
+  .skill-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .skill-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .skill-desc {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 1rem;
+  }
+
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.2);
+    color: var(--green);
+    letter-spacing: 0.5px;
+  }
+
+  /* Terminal block */
+  .terminal {
+    background: #000;
+    border: 1px solid var(--border);
+    border-top: 28px solid var(--surface);
+    padding: 1.5rem 2rem;
+    position: relative;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 2;
+    margin-top: 3rem;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+  }
+  .terminal::before {
+    content: '● ● ●';
+    position: absolute;
+    top: -22px;
+    left: 12px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 4px;
+  }
+  .terminal .t-prompt { color: var(--green); }
+  .terminal .t-cmd { color: #fff; }
+  .terminal .t-out { color: var(--muted); }
+  .terminal .t-green { color: var(--green); }
+  .terminal .t-acc { color: var(--accent); }
+
+  /* Projects */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+  }
+  .project-card::after {
+    content: attr(data-num);
+    position: absolute;
+    bottom: -0.5rem; right: 1rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 4rem;
+    font-weight: 800;
+    color: rgba(0,255,136,0.04);
+    line-height: 1;
+  }
+  .project-card:hover { border-color: var(--green); box-shadow: 0 10px 40px rgba(0,255,136,0.1); transform: translateY(-4px); }
+
+  .project-type {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    letter-spacing: 3px;
+    margin-bottom: 0.8rem;
+  }
+
+  .project-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.8rem;
+  }
+
+  .project-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Education & Certs */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 2rem;
+    padding-left: 0;
+  }
+
+  .tl-dot {
+    width: 40px;
+    height: 40px;
+    background: var(--surface);
+    border: 2px solid var(--green);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 15px rgba(0,255,136,0.2);
+  }
+
+  .tl-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    flex: 1;
+    transition: border-color 0.3s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  }
+  .tl-content:hover { border-color: var(--green); }
+
+  .tl-year {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--green);
+    margin-bottom: 0.3rem;
+  }
+
+  .tl-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.2rem;
+  }
+
+  .tl-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  /* Contact */
+  #contact { background: linear-gradient(180deg, var(--bg) 0%, #020808 100%); }
+
+  .contact-box {
+    border: 1px solid var(--border);
+    padding: 3rem;
+    background: var(--surface);
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+    text-align: center;
+  }
+
+  .contact-email {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    color: var(--green);
+    text-decoration: none;
+    display: block;
+    margin: 1.5rem 0;
+    transition: text-shadow 0.2s;
+  }
+  .contact-email:hover { text-shadow: 0 0 20px rgba(0,255,136,0.6); }
+
+  .contact-links {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .contact-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+  }
+  .contact-links a:hover { color: var(--green); border-color: var(--green); }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.2rem; }
+    .nav-links { gap: 1rem; }
+    .section-inner { padding: 4rem 1.2rem; }
+    #hero { padding: 6rem 1.2rem 3rem; }
+    .contact-box { padding: 2rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">SY<span>_</span><span class="blink">|</span></div>
+  <ul class="nav-links">
+    <a href="#about">about</a>
+    <a href="#skills">skills</a>
+    <a href="#projects">projects</a>
+    <a href="#education">education</a>
+    <a href="#contact">contact</a>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="status-badge">
+    <span class="status-dot"></span>
+    AVAILABLE FOR INTERNSHIP / JUNIOR ROLES
+  </div>
+  <div class="hero-tag">// CYBERSECURITY & DEVELOPMENT</div>
+  <h1>Shlok<br><span class="highlight">Yadav</span></h1>
+  <div class="hero-role">Cybersecurity Enthusiast | Backend & Web Dev | Ethical Hacking<span class="blink">_</span></div>
+  <p class="hero-desc">
+    Computer Engineering student passionate about securing systems, building apps, and exploring the digital frontier — one packet at a time.
+  </p>
+  <div class="hero-ctas">
+    <a href="#contact" class="btn btn-primary">GET IN TOUCH</a>
+    <a href="#skills" class="btn btn-outline">VIEW SKILLS</a>
+  </div>
+
+  <div class="terminal">
+    <div><span class="t-prompt">root@shlok</span>:<span class="t-acc">~</span>$ whoami</div>
+    <div class="t-out">Shlok Yadav — Cybersecurity Enthusiast Student and Developer, Surat, IN</div>
+    <div><span class="t-prompt">root@shlok</span>:<span class="t-acc">~</span>$ cat interests.txt</div>
+    <div class="t-out">[ Android Dev, Ethical Hacking, Web Dev, Networking ]</div>
+    <div><span class="t-prompt">root@shlok</span>:<span class="t-acc">~</span>$ ping opportunity<span class="blink">_</span></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- About -->
+<section id="about">
+  <div class="section-inner">
+    <span class="section-label">// 01. ABOUT</span>
+    <h2 class="reveal">About Me</h2>
+    <div class="reveal" style="max-width:700px; line-height:1.8; font-size:1.05rem;">
+      <p style="margin-bottom:1rem;">
+        I'm a Computer Engineering student at Bhagwan Mahavir University, Surat, with a deep interest in how systems work — and how they can be broken and fixed. My journey spans Android development, Python scripting, ethical hacking, and core networking concepts.
+      </p>
+      <p style="margin-bottom:1rem;">
+        I've performed basic penetration testing in lab environments using tools like <strong style="color:var(--green)">Kali Linux</strong>, analysed network traffic with <strong style="color:var(--green)">Wireshark</strong>, and built functional Android apps in Java. I believe real security comes from truly understanding systems — not just following checklists.
+      </p>
+      <p>
+        I'm seeking an internship or junior-level role where I can contribute meaningfully, grow fast, and tackle real-world challenges alongside experienced teams.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Skills -->
+<section id="skills">
+  <div class="section-inner">
+    <span class="section-label">// 02. SKILLS</span>
+    <h2 class="reveal">Technical Arsenal</h2>
+    <div class="skills-grid">
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🛡️</div>
+        <div class="skill-title">Cybersecurity Fundamentals</div>
+        <div class="skill-desc">CIA Triad, threat modelling, vulnerability assessment, and defence-in-depth strategies. Solid grounding in security principles from IICL certification programme.</div>
+        <div class="skill-tags">
+          <span class="tag">CIA Triad</span>
+          <span class="tag">Threat Modelling</span>
+          <!-- <span class="tag">Pen Testing</span> -->
+          <span class="tag">OWASP</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">💻</div>
+        <div class="skill-title">Kali Linux & Ethical Hacking</div>
+        <div class="skill-desc">Hands-on usage of Kali Linux in lab environments for ethical hacking, reconnaissance, and basic exploitation. Familiar with nmap, Metasploit, and Burp Suite basics.</div>
+        <div class="skill-tags">
+          <span class="tag">Kali Linux</span>
+          <span class="tag">nmap</span>
+          <span class="tag">Metasploit</span>
+          <span class="tag">Burp Suite</span>
+          <span class="tag">Recon</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🌐</div>
+        <div class="skill-title">Networking</div>
+        <div class="skill-desc">Understanding of OSI model, TCP/IP stack, subnetting, DNS, firewalls, and network protocols. Practical packet analysis using Wireshark.</div>
+        <div class="skill-tags">
+          <span class="tag">Wireshark</span>
+          <span class="tag">TCP/IP</span>
+          <span class="tag">OSI Model</span>
+          <span class="tag">Subnetting</span>
+          <span class="tag">DNS</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">📱</div>
+        <div class="skill-title">Android Development</div>
+        <div class="skill-desc">Built multiple functional Android applications in Java. Comfortable with Android SDK, activities, intents, layouts, and basic backend integration.</div>
+        <div class="skill-tags">
+          <span class="tag">Java</span>
+          <span class="tag">Android SDK</span>
+          <span class="tag">XML Layouts</span>
+          <!-- <span class="tag">Firebase</span> -->
+        </div>
+      </div>
+
+      <!-- <div class="skill-card reveal">
+        <div class="skill-icon">🐍</div>
+        <div class="skill-title">Python & Automation</div>
+        <div class="skill-desc">Writing Python scripts for automation, data processing, and security-related tooling. Experience with libraries such as os, subprocess, requests, and socket.</div>
+        <div class="skill-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Automation</span>
+          <span class="tag">Scripting</span>
+          <span class="tag">Socket</span>
+        </div>
+      </div> -->
+
+      <div class="skill-card reveal">
+        <div class="skill-icon">🔧</div>
+        <div class="skill-title">Dev Tools & Linux Admin</div>
+        <div class="skill-desc">Version control with Git & GitHub, basic Linux system administration, shell scripting, and troubleshooting hardware and software environments.</div>
+        <div class="skill-tags">
+          <span class="tag">Git</span>
+          <span class="tag">GitHub</span>
+          <span class="tag">Linux CLI</span>
+          <span class="tag">Shell Script</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Projects -->
+<section id="projects">
+  <div class="section-inner">
+    <span class="section-label">// 03. PROJECTS</span>
+    <h2 class="reveal">Featured Work</h2>
+    <div class="projects-grid">
+
+      <div class="project-card reveal" data-num="01">
+        <div class="project-type">ANDROID · JAVA</div>
+        <div class="project-title">Android App Suite</div>
+        <div class="project-desc">Developed multiple functional Android applications using Java and Android SDK, covering UI design, data persistence, and activity lifecycle management.</div>
+        <div class="skill-tags">
+          <span class="tag">Java</span>
+          <span class="tag">Android</span>
+          <span class="tag">SQLite</span>
+        </div>
+      </div>
+
+      <!-- <div class="project-card reveal" data-num="02">
+        <div class="project-type">SECURITY · PYTHON</div>
+        <div class="project-title">Network Analyser Script</div>
+        <div class="project-desc">Python-based tool to automate basic network scanning and port discovery. Combines socket programming with structured output for quick recon in lab environments.</div>
+        <div class="skill-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Networking</span>
+          <span class="tag">Socket</span>
+        </div>
+      </div> -->
+
+      <div class="project-card reveal" data-num="03">
+        <div class="project-type">ETHICAL HACKING · KALI</div>
+        <div class="project-title">Pen Testing Lab Environment</div>
+        <div class="project-desc">Set up and operated a controlled penetration testing environment using Kali Linux. Practised reconnaissance, vulnerability scanning, and basic exploitation on intentionally vulnerable VMs.</div>
+        <div class="skill-tags">
+          <span class="tag">Kali Linux</span>
+          <span class="tag">nmap</span>
+          <span class="tag">Metasploit</span>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-num="04">
+        <div class="project-type">NETWORKING · WIRESHARK</div>
+        <div class="project-title">Packet Analysis Study</div>
+        <div class="project-desc">Captured and analysed real network traffic using Wireshark. Identified protocols, anomalies, and patterns across HTTP, DNS, TCP handshakes, and ARP packets.</div>
+        <div class="skill-tags">
+          <span class="tag">Wireshark</span>
+          <span class="tag">TCP/IP</span>
+          <span class="tag">Protocol Analysis</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Education -->
+<section id="education">
+  <div class="section-inner">
+    <span class="section-label">// 04. EDUCATION & CERTS</span>
+    <h2 class="reveal">Credentials</h2>
+    <div class="timeline reveal">
+
+      <div class="timeline-item">
+        <div class="tl-dot">DE</div>
+        <div class="tl-content">
+          <div class="tl-year">2023 — 2026</div>
+          <div class="tl-title">Computer Engineering</div>
+          <div class="tl-sub">Bhagwan Mahavir University, Surat</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">CS</div>
+        <div class="tl-content">
+          <div class="tl-year">IICL-Certificate (2024-2026)</div>
+          <div class="tl-title">Diploma in Cyber Security Engineering</div>
+          <div class="tl-sub">Completed — Indian Institute of Computer Learning</div>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="tl-dot">SE</div>
+        <div class="tl-content">
+          <div class="tl-year">IICL-Certificate (2024-2026)</div>
+          <div class="tl-title">Advanced Diploma in Software Engineering</div>
+          <div class="tl-sub">Completed — Indian Institute of Computer Learning</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="section-inner">
+    <span class="section-label">// 05. CONTACT</span>
+    <h2 class="reveal">Let's Connect</h2>
+    <div class="contact-box reveal">
+      <p style="font-family:'Share Tech Mono',monospace; color:var(--muted); font-size:0.85rem; letter-spacing:1px;">OPEN TO INTERNSHIPS & JUNIOR ROLES</p>
+      <a href="mailto:yadavshlok2005@gmail.com" class="contact-email">yadavshlok2005@gmail.com</a>
+      <p style="color:var(--muted); font-size:0.95rem; max-width:480px; margin:0 auto 1.5rem; line-height:1.7;">
+        If you're looking for a motivated engineering student with a passion for cybersecurity and development, let's talk.
+      </p>
+      <div class="contact-links">
+        <a href="https://www.linkedin.com/in/shlokcyberengineer" target="_blank">↗ LINKEDIN</a>
+        <a href="mailto:yadavshlok2005@gmail.com">✉ EMAIL</a>
+        <a href="#hero">↑ BACK TO TOP</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span style="color:var(--green)">root@shlok</span>:<span style="color:var(--accent)">~</span>$ echo "Built with purpose · Shlok Yadav © 2026"
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; cursor.style.left = mouseX + 'px'; cursor.style.top = mouseY + 'px'; });
+  function animRing() { ringX += (mouseX - ringX) * 0.12; ringY += (mouseY - ringY) * 0.12; ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px'; requestAnimationFrame(animRing); }
+  animRing();
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), 100);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.getAttribute('id'); });
+    navLinks.forEach(a => { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--green)' : ''; });
+  });
+</script>
+</body>
+</html>
