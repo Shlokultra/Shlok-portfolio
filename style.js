@@ -25,4 +25,8 @@
 //     let current = '';
 //     sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.getAttribute('id'); });
 //     navLinks.forEach(a => { a.style.color = a.getAttribute('href') === '#' + current ? 'var(--green)' : ''; });
+
 //   });
+
+
+//   // Theme toggle
